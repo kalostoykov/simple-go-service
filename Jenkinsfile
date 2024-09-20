@@ -15,8 +15,7 @@ pipeline {
             steps {
                 container('golang') {
                     sh '''
-                    go get github.com/onsi/ginkgo/v2
-                    go install github.com/onsi/ginkgo/v2/ginkgo
+                    go mod download
 
                     go test ./...
                     '''
