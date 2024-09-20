@@ -3,10 +3,6 @@ metadata:
     jenkins-runner: dind
 spec:
   containers:
-  - name: my-main-container
-    env:
-    - name: DOCKER_HOST
-      value: tcp://localhost:2375
   - name: dind
     image: docker:18.05-dind
     securityContext:
