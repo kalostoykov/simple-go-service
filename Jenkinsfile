@@ -13,9 +13,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                container('maven') {
-                    sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
-                    sh 'mvn -version'
+                container('golang') {
+                    sh '''
+                    go get github.com/onsi/ginkgo/v2
+                    go install github.com/onsi/ginkgo/v2/ginkgo
+
+                    go test ./...
+                    '''
                 }
             }
         }
