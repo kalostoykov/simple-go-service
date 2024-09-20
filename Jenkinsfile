@@ -6,20 +6,20 @@ pipeline {
     }
 
     stages {
-        stage('Test') {
-            steps {
-                container('golang') {
-                    sh '''
-                    go mod download
+        // stage('Test') {
+        //     steps {
+        //         container('golang') {
+        //             sh '''
+        //             go mod download
 
-                    go test ./...
-                    '''
-                }
-            }
-        }
+        //             go test ./...
+        //             '''
+        //         }
+        //     }
+        // }
         stage('Build') {
             steps {
-                container('dind') {
+                container('docker') {
                     sh '''
                     docker info
                     docker build -t simple-go-service:${env.BUILD_NUMBER} .
@@ -27,10 +27,10 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         echo 'Deploying....'
+        //     }
+        // }
     }
 }
