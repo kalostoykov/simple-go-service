@@ -1,6 +1,8 @@
 pipeline {
     agent {
-        docker { image 'node:20.17.0-alpine3.20' }
+        kubernetes {
+            yamlFile 'jenkins_pod_templates/KubernetesPod.yaml'
+        }
     }
 
     stages {
@@ -11,7 +13,10 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'node --version'
+                container('maven') {
+                    sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
+                    sh 'mvn -version'
+                }
             }
         }
         stage('Deploy') {
