@@ -105,3 +105,27 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+healthCheckCronjob:
+  enabled: true
+  image:
+    repository: alpine
+    tag: "3.14"
+    pullPolicy: IfNotPresent
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  script: |
+    #!/bin/bash
+
+    apk add curl
+
+    server="simple-go-service.simple-go-service.svc.cluster.local"
+    port=8080
+    endpoint="/v1/data"
+    requestheader="If-Modified-Since: Tue, 24 Sep 2024 10:10:24 GMT"
+    if [ $(curl -o /dev/null -s -w "%{http_code}\n" --header "${requestheader}" ${server}:${port}${endpoint}) != 200 ]; then
+    echo "Send notification via sendmail or similar"
+    fi
+
+    exit 0

@@ -1,0 +1,30 @@
+{{- if .Values.healthCheckCronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "simple-go-service.fullname" . }}-health-check
+spec:
+  schedule: "{{ .Values.healthCheckCronjob.schedule }}"
+  successfulJobsHistoryLimit: {{ .Values.healthCheckCronjob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.healthCheckCronjob.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: script
+            image: {{ .Values.healthCheckCronjob.image.repository }}:{{ .Values.healthCheckCronjob.image.tag }}
+            imagePullPolicy: {{ .Values.healthCheckCronjob.image.pullPolicy }}
+            command: ["/bin/sh", "/app/entrypoint.sh"]
+            volumeMounts:
+            - name: configmap-volume
+              mountPath: /app/entrypoint.sh
+              readOnly: true
+              subPath: entrypoint.sh
+          volumes:
+          - name: configmap-volume
+            configMap:
+              defaultMode: 0700
+              name: {{ include "simple-go-service.fullname" . }}-health-check
+          restartPolicy: Never
+{{- end }}

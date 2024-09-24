@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "simple-go-service.fullname" . }}-health-check
+  labels:
+    {{- include "simple-go-service.labels" . | nindent 4 }}
+data:
+  entrypoint.sh: |
+    {{- .Values.healthCheckCronjob.script | nindent 4 }}
