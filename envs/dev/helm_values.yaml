@@ -1,6 +1,7 @@
 replicaCount: 1
 
 image:
+  repository: kalostoykov/simple-go-service
   tag: "testing"
 
 livenessProbe:
@@ -12,6 +13,7 @@ livenessProbe:
     httpHeaders:
       - name: "If-Modified-Since"
         value: "MON, 23 SEP 2024 15:04:05 GMT"
+
 readinessProbe:
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -21,6 +23,14 @@ readinessProbe:
     httpHeaders:
       - name: "If-Modified-Since"
         value: "MON, 23 SEP 2024 15:04:05 GMT"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 healthCheckCronjob:
   enabled: true
