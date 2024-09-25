@@ -8,6 +8,8 @@ pipeline {
     environment {
         DOCKER_REGISTRY_HOST="https://index.docker.io/"
         DOCKER_REGISTRY_NAME="kalostoykov"
+        HELM_RELEASE_NAME="simple-go-service"
+        HELM_RELEASE_NAMESPACE="simple-go-service"
     }
 
     stages {
@@ -24,11 +26,11 @@ pipeline {
                 container('helm') {
                     sh '''
                     helm template \
-                    --namespace simple-go-service \
+                    --namespace ${HELM_RELEASE_NAMESPACE} \
                     --validate \
                     -f envs/dev/helm_values.yaml \
-                    simple-go-service \
-                    ./charts/simple-go-service
+                    ${HELM_RELEASE_NAME} \
+                    ./charts/${HELM_RELEASE_NAME}
                     '''
                 }
             }
@@ -51,14 +53,17 @@ pipeline {
         // }
 
         stage('Deploy') {
+            when {
+                branch 'master'
+            }
             steps {
                 container('helm') {
                     sh '''
                     helm upgrade \
-                    --namespace simple-go-service \
+                    --namespace ${HELM_RELEASE_NAMESPACE} \
                     -f envs/dev/helm_values.yaml \
-                    simple-go-service \
-                    ./charts/simple-go-service
+                    ${HELM_RELEASE_NAME} \
+                    ./charts/${HELM_RELEASE_NAME}
                     '''
                 }
             }
