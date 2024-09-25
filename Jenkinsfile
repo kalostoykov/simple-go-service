@@ -15,7 +15,14 @@ pipeline {
             steps {
                 container('helm') {
                     sh '''
-                    helm -n simple-go-service list
+                    ls -lah
+                    ls -lah ${env.WORKSPACE}
+                    helm template \
+                    --namespace simple-go-service \
+                    --validate \
+                    -f envs/dev/helm_values.yaml \
+                    simple-go-service \
+                    ${env.WORKSPACE}/charts/simple-go-service
                     '''
                 }
             }
