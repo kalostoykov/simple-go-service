@@ -13,16 +13,22 @@ pipeline {
     stages {
         stage('Test') {
             steps {
+                container('golang') {
+                    sh '''
+                    go mod download
+
+                    go test ./...
+                    '''
+                }
+
                 container('helm') {
                     sh '''
-                    ls -lah
-                    ls -lah ${env.WORKSPACE}
                     helm template \
                     --namespace simple-go-service \
                     --validate \
                     -f envs/dev/helm_values.yaml \
                     simple-go-service \
-                    ${env.WORKSPACE}/charts/simple-go-service
+                    ./charts/simple-go-service
                     '''
                 }
             }
@@ -44,10 +50,18 @@ pipeline {
         //     }
         // }
 
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Deploying....'
-        //     }
-        // }
+        stage('Deploy') {
+            steps {
+                container('helm') {
+                    sh '''
+                    helm upgrade \
+                    --namespace simple-go-service \
+                    -f envs/dev/helm_values.yaml \
+                    simple-go-service \
+                    ./charts/simple-go-service
+                    '''
+                }
+            }
+        }
     }
 }
