@@ -1,0 +1,29 @@
+spec:
+  containers:
+  - name: golang
+    image: golang:1.22.7-alpine3.20
+    command:
+    - sleep
+    args:
+    - 99d
+  - name: helm
+    image: alpine/helm:3
+    env:
+      - name: KUBECONFIG
+        value: /app-secrets/helm-executor.config
+    command:
+    - sleep
+    args:
+    - 99d
+    volumeMounts:
+      - name: helm-executor-volume
+        mountPath: /app-secrets/helm-executor.config
+        subPath: helm-executor.config
+        readOnly: true
+  volumes:
+  - name: helm-executor-volume
+    secret:
+      secretName: helm-executor-config
+      items:
+      - key: helm-executor.config
+        path: helm-executor.config
